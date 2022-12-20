@@ -78,7 +78,7 @@ while(ejecucion==true){
                     alert("Cajero en mantenimiento, vuelva pronto.");
                 }else{
                     let dineroSolicitado = parseInt(prompt('Ingrese el dinero que desea retirar.'));
-                    if(dineroSolicitado<=totalDinero){
+                    if(dineroSolicitado<=totalDinero && dineroSolicitado>0){
                         //entregar dinero
                         if(dineroSolicitado%5000!=0){
                             dineroSolicitado-=dineroSolicitado%5000;
@@ -100,10 +100,21 @@ while(ejecucion==true){
                                 dineroSolicitado -= retiroDineroActualizacion(dineroSolicitado, 5);
                             }
                         }
-                    } else{
+
+                    } else if(dineroSolicitado>totalDinero){
                         alert('El cajero no posee suficiente dinero para entregarle.');
+                    } else{
+                        alert('Cantidad invalida.');
                     }
                 }
+                let claves = Object.keys(billetesRetiro);
+                for(let i = 0; i<claves.length;i++){
+                    if(parseInt(billetesRetiro[claves[i]])!=0){
+                        //mostrar los billetes que se deben entregar.
+                        alert(`${billetesRetiro[claves[i]]} billete(s) de ${claves[i]}`);
+                    }
+                }
+                document.write(JSON.stringify(billetesRetiro));
                 console.log(totalDinero);
             }
         } else{
@@ -114,6 +125,6 @@ while(ejecucion==true){
     if(auxiliar!=true){
         ejecucion = false;
     }
-    document.write(JSON.stringify(billetes));
-    document.write(JSON.stringify(usuario));
+    /*document.write(JSON.stringify(billetes));
+    document.write(JSON.stringify(usuario));*/
 };
