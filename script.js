@@ -24,6 +24,7 @@ let usuarios = [
         "tipoUsuario": 2
     }
 ];
+//objeto de los billetes que hay en el cajero
 let billetes = {
     "5": 0,
     "10": 0,
@@ -31,6 +32,7 @@ let billetes = {
     "50":0,
     "100": 0
 };
+//objeto de los billetes que se daran al usuario que retira el dinero.
 let billetesRetiro = {
     "5": 0,
     "10": 0,
@@ -40,10 +42,24 @@ let billetesRetiro = {
 };
 
 
-let ejecucion = true;
+let ejecucion = true; // variable para permitir que el programa se mantenga ejecutando
 let usuario, documento, auxiliar;
-let totalDinero = 0;
+let totalDinero = 0; // total del dinero que hay en billetes dentro del cajero
 
+// funcion para calcular los billetes que se tiene que entregar.
+// recibe dos variables numericas, una del dinero solicitado y otra con la 
+// denominacion del billete, dicha denominacion se multiplica por 1000 para
+// dejarla en terminos de miles de pesos.
+
+// se definen dos variables auxiliares, auxiliarRetiro recibe el modulo (es decir, el resto) 
+// de la division entre el dinero solicitado y la denominacion del billete en miles de pesos.
+// luego AuxiliarResta se define como la resta entre el dinero solicitado y auxuliarRetiro, 
+// en auxiliarResta queda el dinero que es capaz de devolverse con ese billete.
+// luego se define en el objeto de billetesRetiro la cantidad de billetes con la operacion de
+// dividir auxiliarResta entre la denominacion del billete en miles de pesos.
+// se resta auxiliarResta de la cantidad totalDinero, se restan los billetes que se van a retirar
+// de los billetes que hay en el cajero y
+// Por ultimo se retorna auxiliarRetiro que sería el dinero que falta por devolver en billetes.
 function retiroDineroActualizacion(dineroSol, billete ){
     let auxiliarRetiro = 0;
     let auxiliarResta = 0; 
@@ -72,14 +88,13 @@ while(ejecucion==true){
                 }
                 //mostrar por consola la suma de cada denominacion y el total general
                 console.log(totalDinero);
-                alert("Se le devolverá al menu inicial");
             } else{
                 if(totalDinero==0){
                     alert("Cajero en mantenimiento, vuelva pronto.");
                 }else{
                     let dineroSolicitado = parseInt(prompt('Ingrese el dinero que desea retirar.'));
                     if(dineroSolicitado<=totalDinero && dineroSolicitado>0){
-                        //entregar dinero
+                        // redondeamos primero a la cifra menor mas cercana. 
                         if(dineroSolicitado%5000!=0){
                             dineroSolicitado-=dineroSolicitado%5000;
                         } 
@@ -114,17 +129,17 @@ while(ejecucion==true){
                         alert(`${billetesRetiro[claves[i]]} billete(s) de ${claves[i]}`);
                     }
                 }
-                document.write(JSON.stringify(billetesRetiro));
+                //document.write(JSON.stringify(billetesRetiro));
                 console.log(totalDinero);
             }
         } else{
             alert("Contrasena incorrecta");
         };
+    } else {
+        alert('Este usuario no existe');
     }
     auxiliar = confirm('Desea continuar con la ejecucion?');
     if(auxiliar!=true){
         ejecucion = false;
     }
-    /*document.write(JSON.stringify(billetes));
-    document.write(JSON.stringify(usuario));*/
 };
