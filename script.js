@@ -59,17 +59,29 @@ let totalDinero = 0; // total del dinero que hay en billetes dentro del cajero
 // dividir auxiliarResta entre la denominacion del billete en miles de pesos.
 // se resta auxiliarResta de la cantidad totalDinero, se restan los billetes que se van a retirar
 // de los billetes que hay en el cajero y
-// Por ultimo se retorna auxiliarRetiro que sería el dinero que falta por devolver en billetes.
+// Por ultimo se retorna auxiliarResta que es el dinero que se resta del dinero solicitado.
+
+// nota: se modificó la parte de cuantos billetes se iban a devolver porque se necesitaba una
+// condicion que permitiera controlar la cantidad de billetes que se van a devolver y que
+// estos no fueran mayores a la cantidad de billetes que hay en el cajero.
 function retiroDineroActualizacion(dineroSol, billete ){
     let auxiliarRetiro = 0;
     let auxiliarResta = 0; 
     auxiliarRetiro = dineroSol%(billete*1000);
     auxiliarResta = dineroSol-auxiliarRetiro;
-    billetesRetiro[billete] = (auxiliarResta)/(billete*1000);
-    totalDinero -= auxiliarResta;
-    billetes[billete] -= billetesRetiro[billete];
+    if((auxiliarResta)/(billete*1000) <= billete[billete]){
+        billetesRetiro[billete] = (auxiliarResta)/(billete*1000);
+        totalDinero -= auxiliarResta;
+        billetes[billete] -= billetesRetiro[billete];
+    } else{
+        billetesRetiro[billete] = billetes[billete];
+        billetes[billete] -= billetesRetiro[billete];
+        auxiliarResta = billetesRetiro[billete]*(billete*1000);
+        totalDinero-= auxiliarResta;
+    }
     return auxiliarResta;
 }
+
 while(ejecucion==true){
     documento = prompt("Ingrese su numero de documento");
     usuario = usuarios.find(usuario => usuario.documento === documento);
@@ -102,31 +114,43 @@ while(ejecucion==true){
                         let auxiliarRetiro = 0;
                         let auxiliarResta = 0;
                         while(dineroSolicitado!=0){
-                            if(dineroSolicitado>=100000){
-                                dineroSolicitado -= retiroDineroActualizacion(dineroSolicitado, 100);
-                                console.log(dineroSolicitado);           
-                            } else if(dineroSolicitado>=50000){
+                            if(dineroSolicitado>=100000 && billetes[100]>0){
+                                dineroSolicitado -= retiroDineroActualizacion(dineroSolicitado, 100);           
+                            } else if(dineroSolicitado>=50000 && billetes[50]>0){
                                 dineroSolicitado -= retiroDineroActualizacion(dineroSolicitado, 50);
-                            } else if(dineroSolicitado>=20000){
+                            } else if(dineroSolicitado>=20000 && billetes[20]>0){
                                 dineroSolicitado -= retiroDineroActualizacion(dineroSolicitado, 20);   
-                            } else if(dineroSolicitado>=10000){
+                            } else if(dineroSolicitado>=10000 && billetes[10]>0){
                                 dineroSolicitado -= retiroDineroActualizacion(dineroSolicitado, 10);
-                            }else if(dineroSolicitado>=5000){
+                            }else if(dineroSolicitado>=5000 && billetes[5]>0){
                                 dineroSolicitado -= retiroDineroActualizacion(dineroSolicitado, 5);
+                            } else {
+                                // cuando no se cumple ninguna de las condiciones anteriores, significa que la cantidad
+                                // ingresada no es retornable en los billetes que hay en el cajero.
+                                alert('Ocurrió un error, no se le puede devolver el dinero.');
+                                dineroSolicitado = 0; // se define esta variable en 0 para salir del while
+                                // se recorre el object de los billetes para volver todo a como estaba antes de empezar el ciclo.
+                                let claves = Object.keys(billetes);
+                                for(let i = 0; i<claves.length;i++){
+                                    billetes[claves[i]]+=billetesRetiro[claves[i]];
+                                    totalDinero += billetesRetiro[claves[i]]*(claves[i]*1000);
+                                    billetesRetiro[claves[i]] = 0;
+                                };
                             }
                         }
-
                     } else if(dineroSolicitado>totalDinero){
                         alert('El cajero no posee suficiente dinero para entregarle.');
                     } else{
                         alert('Cantidad invalida.');
                     }
                 }
+                // en este ciclo se recorre el object de los billetes a retirar para mostrarlos y se reinicia este objeto
                 let claves = Object.keys(billetesRetiro);
                 for(let i = 0; i<claves.length;i++){
                     if(parseInt(billetesRetiro[claves[i]])!=0){
                         //mostrar los billetes que se deben entregar.
                         alert(`${billetesRetiro[claves[i]]} billete(s) de ${claves[i]}`);
+                        billetesRetiro[claves[i]] = 0;
                     }
                 }
                 //document.write(JSON.stringify(billetesRetiro));
